@@ -1,34 +1,17 @@
 # Project
 
-This repository is a neutral Jarvas/JDS project bootstrap.
+Repository initialized from the Jarvas Engineering Platform fresh-project baseline.
 
-It intentionally starts without assumptions about programming language, framework, runtime, cloud, browser automation, MCP, infrastructure or deployment model.
+The initial baseline intentionally enables only JDS planning, mandatory repository security and delivery evidence. It does not assume a programming language, framework, runtime, deployment target or execution strategy.
 
-## Engineering baseline
+When implementation begins, enable auto-detection and/or add only the capabilities the project actually needs in `.jarvas/engineering.yml`.
 
-The repository consumes `pestoura/jarvas-engineering-platform` and starts with only:
+## First delivery slice
 
-- JDS planning;
-- mandatory repository secret scanning;
-- delivery evidence;
-- project-neutral collaboration/documentation scaffolding.
+1. Define the product objective and next usable baseline.
+2. Add only the minimum project structure required for that vertical slice.
+3. Enable or declare the corresponding engineering capabilities.
+4. Let JDS select the applicable gates from risk + capabilities + change impact.
+5. Keep project-specific acceptance gates local until a central equivalent has proven parity.
 
-When the first real vertical slice is defined, enable auto-detection and/or add only the engineering capabilities that the project actually needs in `.jarvas/engineering.yml`.
-
-## Delivery rule
-
-```text
-DISCOVER / DEFINE NEXT USABLE BASELINE
-        -> IMPLEMENT SMALL VERTICAL SLICE
-        -> RUN APPLICABLE FAST/SECURITY GATES
-        -> INTEGRATE
-        -> RUN APPLICABLE EXPENSIVE/LIVE GATES
-        -> EVIDENCE
-        -> DELIVER
-```
-
-Project-specific gates remain local until a central equivalent has proven parity.
-
-## Template use
-
-This repository is intended to become `pestoura/jarvas-project-template` and be marked as a GitHub **Template repository**. New projects should then be created with **Use this template**, not with the generic empty-repository flow.
+The manifest uses `metadata.name: AUTO` because GitHub Template Repositories do not substitute repository names into copied files. Runtime evidence uses GitHub's actual `${{ github.repository }}` identity.
