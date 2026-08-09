@@ -1,0 +1,74 @@
+name: Template contract
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: template-contract-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  contract:
+    name: Canonical template parity
+    runs-on: ubuntu-latest
+    env:
+      PLATFORM_SHA: 02b7336088b970644c3ce5c07591a9d128df936d
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch canonical bootstrap
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/jds-template/.jarvas /tmp/jds-template/.github/workflows
+          base="https://raw.githubusercontent.com/pestoura/jarvas-engineering-platform/${PLATFORM_SHA}/templates/fresh-repository"
+          curl --fail --silent --show-error --location "$base/README.md" -o /tmp/jds-template/README.md
+          curl --fail --silent --show-error --location "$base/.jarvas/engineering.yml" -o /tmp/jds-template/.jarvas/engineering.yml
+          curl --fail --silent --show-error --location "$base/.github/workflows/jds.yml" -o /tmp/jds-template/.github/workflows/jds.yml
+
+      - name: Require canonical file parity
+        run: |
+          set -euo pipefail
+          cmp README.md /tmp/jds-template/README.md
+          cmp .jarvas/engineering.yml /tmp/jds-template/.jarvas/engineering.yml
+          cmp .github/workflows/jds.yml /tmp/jds-template/.github/workflows/jds.yml
+
+      - name: Preserve universal technology-neutral boundary
+        run: |
+          set -euo pipefail
+          forbidden=(
+            pyproject.toml
+            package.json
+            package-lock.json
+            pnpm-lock.yaml
+            yarn.lock
+            Dockerfile
+            docker-compose.yml
+            compose.yml
+            playwright.config.ts
+            playwright.config.js
+            Cargo.toml
+            go.mod
+            pom.xml
+            build.gradle
+            main.tf
+          )
+          for path in "${forbidden[@]}"; do
+            if [[ -e "$path" ]]; then
+              echo "Universal template must not assume project technology: $path" >&2
+              exit 1
+            fi
+          done
+
+      - name: Require immutable central references
+        run: |
+          set -euo pipefail
+          grep -Eq 'platformRef: [0-9a-f]{40}$' .jarvas/engineering.yml
+          grep -Eq 'jarvas-engineering-platform/.+@[0-9a-f]{40}' .github/workflows/jds.yml
+          ! grep -R --line-number --fixed-strings '@main' .jarvas .github/workflows/jds.yml
